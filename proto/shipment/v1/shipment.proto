@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package shipment.v1;
+
+option go_package = "github.com/raissov/shipment-service/gen/shipment/v1;shipmentv1";
+
+import "google/protobuf/timestamp.proto";
+
+service ShipmentService {
+  rpc CreateShipment(CreateShipmentRequest) returns (CreateShipmentResponse);
+  rpc GetShipment(GetShipmentRequest) returns (GetShipmentResponse);
+  rpc ListShipments(ListShipmentsRequest) returns (ListShipmentsResponse);
+  rpc AddStatusEvent(AddStatusEventRequest) returns (AddStatusEventResponse);
+  rpc GetShipmentHistory(GetShipmentHistoryRequest) returns (GetShipmentHistoryResponse);
+}
+
+// Enums
+
+enum ShipmentStatus {
+  SHIPMENT_STATUS_UNSPECIFIED = 0;
+  SHIPMENT_STATUS_PENDING = 1;
+  SHIPMENT_STATUS_PICKED_UP = 2;
+  SHIPMENT_STATUS_IN_TRANSIT = 3;
+  SHIPMENT_STATUS_DELIVERED = 4;
+  SHIPMENT_STATUS_CANCELLED = 5;
+}
+
+// Messages
+
+message DriverDetails {
+  string name = 1;
+  string phone = 2;
+}
+
+message UnitDetails {
+  string unit_number = 1;
+  string unit_type = 2;
+}
+
+message Shipment {
+  string id = 1;
+  string reference_number = 2;
+  string origin = 3;
+  string destination = 4;
+  ShipmentStatus status = 5;
+  DriverDetails driver = 6;
+  UnitDetails unit = 7;
+  int64 shipment_amount_cents = 8;
+  int64 driver_revenue_cents = 9;
+  google.protobuf.Timestamp created_at = 10;
+  google.protobuf.Timestamp updated_at = 11;
+}
+
+message StatusEvent {
+  string id = 1;
+  string shipment_id = 2;
+  ShipmentStatus status = 3;
+  string comment = 4;
+  google.protobuf.Timestamp occurred_at = 5;
+}
+
+// Requests and Responses
+
+message CreateShipmentRequest {
+  string reference_number = 1;
+  string origin = 2;
+  string destination = 3;
+  DriverDetails driver = 4;
+  UnitDetails unit = 5;
+  int64 shipment_amount_cents = 6;
+  int64 driver_revenue_cents = 7;
+}
+
+message CreateShipmentResponse {
+  Shipment shipment = 1;
+}
+
+message GetShipmentRequest {
+  string id = 1;
+}
+
+message GetShipmentResponse {
+  Shipment shipment = 1;
+}
+
+message AddStatusEventRequest {
+  string shipment_id = 1;
+  ShipmentStatus status = 2;
+  string comment = 3;
+}
+
+message AddStatusEventResponse {
+  StatusEvent event = 1;
+  Shipment shipment = 2;
+}
+
+message ListShipmentsRequest {
+  int32 limit = 1;
+  int32 offset = 2;
+}
+
+message ListShipmentsResponse {
+  repeated Shipment shipments = 1;
+  int32 total = 2;
+}
+
+message GetShipmentHistoryRequest {
+  string shipment_id = 1;
+}
+
+message GetShipmentHistoryResponse {
+  repeated StatusEvent events = 1;
+}
