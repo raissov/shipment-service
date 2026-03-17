@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: shipment
+      POSTGRES_PASSWORD: shipment
+      POSTGRES_DB: shipment
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U shipment"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    build: .
+    entrypoint: ["migrate", "-path", "/migrations", "-database", "postgres://shipment:shipment@postgres:5432/shipment?sslmode=disable", "up"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  server:
+    build: .
+    ports:
+      - "50051:50051"
+    environment:
+      DATABASE_URL: "postgres://shipment:shipment@postgres:5432/shipment?sslmode=disable"
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  pgdata:
