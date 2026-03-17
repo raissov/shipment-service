@@ -1,0 +1,11 @@
+grpc:
+  port: "50051"
+  shutdown_timeout: 10
+
+database:
+  url: "postgres://shipment:shipment@localhost:5432/shipment?sslmode=disable"
+  migrations_path: "migrations"
+
+log:
+  level: "info"
+  format: "console"

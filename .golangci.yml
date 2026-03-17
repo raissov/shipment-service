@@ -1,0 +1,26 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - errcheck
+    - govet
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - typecheck
+    - gofmt
+    - goimports
+    - misspell
+    - revive
+
+linters-settings:
+  revive:
+    rules:
+      - name: exported
+        disabled: true
+
+issues:
+  exclude-dirs:
+    - gen
