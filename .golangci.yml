@@ -1,3 +1,5 @@
+version: "2"
+
 run:
   timeout: 5m
 
@@ -7,19 +9,13 @@ linters:
     - govet
     - staticcheck
     - unused
-    - gosimple
     - ineffassign
-    - typecheck
+    - misspell
+
+formatters:
+  enable:
     - gofmt
     - goimports
-    - misspell
-    - revive
-
-linters-settings:
-  revive:
-    rules:
-      - name: exported
-        disabled: true
 
 issues:
   exclude-dirs:
